@@ -14,26 +14,6 @@ def string_to_hex_color(s):
     # Return the hex color code
     return f"#{hex_code}"
 
-
-
-with ui.header():
-    ui.label("Germany Geocoordinates").classes("text-2xl")
-    ui.space()
-    ui.link(target="/docs", text="API Documentation").classes("text-white text-2xl")
-
-with ui.row().classes("w-full "):
-    label_city = ui.label()
-    input_latitude = ui.input("Latitude", value=str(52.421936))
-    input_longitude = ui.input("Longitude", value=str(9.696477))
-    ui.button("Find City", on_click=process)
-
-
-    m = ui.leaflet(center=(51.520, 10.405))
-    m.set_zoom(6)
-    m.classes("w-full h-[800px]")
-
-import math
-
 def haversine_distance(lat1, lon1, lat2, lon2):
     """
     Berechnet die Distanz zwischen zwei Koordinaten (lat, lon)
@@ -107,6 +87,28 @@ def process():
         lc = sorted_dict.popitem() if sorted_dict else ["Unbekannt"]
         label_city.text = "Die Geokoordinaten gehören zu " + lc[0]
 
+
+
+
+with ui.header():
+    ui.label("Germany Geocoordinates").classes("text-2xl")
+    ui.space()
+    ui.link(target="/docs", text="API Documentation").classes("text-white text-2xl")
+
+with ui.row().classes("w-full items-center"):
+    label_city = ui.label()
+
+with ui.row().classes("w-full items-center"):
+    input_latitude = ui.input("Latitude", value=str(52.421936))
+    input_longitude = ui.input("Longitude", value=str(9.696477))
+    ui.button("Find City", on_click=process)
+
+
+    m = ui.leaflet(center=(51.520, 10.405))
+    m.set_zoom(6)
+    m.classes("w-full h-[800px]")
+
+import math
 
 
 
