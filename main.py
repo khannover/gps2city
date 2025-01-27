@@ -48,7 +48,9 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
-def draw_radius(city_data, loc=(50.78, 6.85)):
+def draw_radius(city_data, loc=None):
+    if not loc:
+        loc = (float(input_latitude.value), float(input_longitude.value))
     # 1) Daten parsen
     city_area = float(city_data.get("area",1))              
     # Stadtfläche in km²
@@ -65,7 +67,7 @@ def draw_radius(city_data, loc=(50.78, 6.85)):
             {
                 'fillColor': color, 
                 'color': 'red',
-                'radius': radius*1000
+                'radius': radius*1000,
             }
         ]
     )
@@ -80,38 +82,45 @@ def draw_radius(city_data, loc=(50.78, 6.85)):
         print(f"Distanz zum Stadtzentrum: {dist:.2f} km")
         print(f"Berechneter Radius (Kreisapprox. aus Fläche): {radius:.2f} km")
         city_data["distance"] = dist
-        m.marker(latlng=loc)
+        marker = m.marker(latlng=loc)
         return city_data
     else:
         return None
 
+label_city = ui.label()
+input_latitude = ui.input("Latitude", value=str(52.421936))
+input_longitude = ui.input("Longitude", value=str(9.696477))
 
-with open("german_cities.json") as o:
-    cities = json.load(o)
-    location_candidates = {}
-    for city in cities:
-        location_candidate = draw_radius(city, (52.421936, 9.696477))
-        if location_candidate:
-            location_candidates[str(location_candidate["name"])] = location_candidate["distance"]
+def process():
+    with open("german_cities.json") as o:
+        cities = json.load(o)
+        location_candidates = {}
+        for city in cities:
+            location_candidate = draw_radius(city)
+            if location_candidate:
+                location_candidates[str(location_candidate["name"])] = location_candidate["distance"]
 
-    # sort candidates by distance
-    sorted_dict = dict(sorted(location_candidates.items(), reverse=True, key=lambda item: item[1]))
-    lc = sorted_dict.popitem() if sorted_dict else [""]
-    ui.label("Die Geokoordinaten gehören zu " + lc[0])
+        # sort candidates by distance
+        sorted_dict = dict(sorted(location_candidates.items(), reverse=True, key=lambda item: item[1]))
+        lc = sorted_dict.popitem() if sorted_dict else ["Unbekannt"]
+        label_city.text = "Die Geokoordinaten gehören zu " + lc[0]
+
+
+ui.button("Find City", on_click=process)
+
 
 
 @app.get("/api/gps2city/{lat}/{lon}")
 def get_city(lat: float, lon: float):
-    result = []
-    for city in cities:
-        location_candidate = draw_radius(city, (lat, lon))
-        if location_candidate:
-            result.append(location_candidate)
-    if result:
+    with open("german_cities.json") as o:
+        cities = json.load(o)
+        location_candidates = {}
+        for city in cities:
+            location_candidate = draw_radius(city, (lat, lon))
+            if location_candidate:
+                location_candidates[str(location_candidate["name"])] = location_candidate["distance"]
         sorted_dict = dict(sorted(location_candidates.items(), reverse=True, key=lambda item: item[0]))
         return sorted_dict
-    else:
-        return {"error": "No city found"}
 
 ui.run(
     port=1234,
