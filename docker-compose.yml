@@ -1,0 +1,10 @@
+services:
+  gps2city:
+    image: gps2city
+    build: .
+    ports:
+      - 1234:1234
+networks:
+  default:
+    external: true
+    name: shared_network

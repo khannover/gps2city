@@ -22,9 +22,15 @@ with ui.header():
     ui.link(target="/docs", text="API Documentation").classes("text-white text-2xl")
 
 with ui.row().classes("w-full "):
-        m = ui.leaflet(center=(51.520, 10.405))
-        m.set_zoom(6)
-        m.classes("w-full h-[800px]")
+    label_city = ui.label()
+    input_latitude = ui.input("Latitude", value=str(52.421936))
+    input_longitude = ui.input("Longitude", value=str(9.696477))
+    ui.button("Find City", on_click=process)
+
+
+    m = ui.leaflet(center=(51.520, 10.405))
+    m.set_zoom(6)
+    m.classes("w-full h-[800px]")
 
 import math
 
@@ -87,10 +93,6 @@ def draw_radius(city_data, loc=None):
     else:
         return None
 
-label_city = ui.label()
-input_latitude = ui.input("Latitude", value=str(52.421936))
-input_longitude = ui.input("Longitude", value=str(9.696477))
-
 def process():
     with open("german_cities.json") as o:
         cities = json.load(o)
@@ -106,7 +108,6 @@ def process():
         label_city.text = "Die Geokoordinaten gehören zu " + lc[0]
 
 
-ui.button("Find City", on_click=process)
 
 
 
