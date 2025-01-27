@@ -13,8 +13,7 @@ These instructions will help you set up the project on your local machine for de
 ### Prerequisites
 
 Ensure you have the following installed:
-- Python 3.10+
-- NiceGUI (pip install nicegui)
+- docker
 
 ### Installation and Running
 
@@ -22,10 +21,9 @@ Ensure you have the following installed:
     ```sh
     git clone https://github.com/khannover/gps2city.git
     cd gps2city
-    python main.py
     ```
-
-2. Open your browser and navigate to `http://localhost:1234`
+2. Run `docker compose up -d --build`
+3. Open your browser and navigate to `http://localhost:1234`
 
 ## Usage
 
